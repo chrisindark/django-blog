@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'hy&qvno)j+gh&^_=32&-eg(jn3@v)qt9d+kp(bq@m6udxiet_-'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1:8000', 'djangoblogheroku.herokuapp.com']
 
 # Application definition
 
@@ -119,3 +119,33 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
+
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+MEDIA_PATH = 'media/'
+STATIC_PATH = 'static/'
+
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, STATIC_PATH))
+MEDIA_ROOT = os.path.abspath(os.path.join(BASE_DIR, MEDIA_PATH))
+
+STATICFILES_DIRS = (
+    # os.path.join(BASE_DIR, 'static'),
+)
+
+AUTH_USER_MODEL = 'accounts.User'
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'accounts.backends.OAuthBackend'
+]
+
+DATE_FORMAT = 'd-m-Y'
+DATE_INPUT_FORMATS = ['%d-%m-%Y',]
+
+# LOGIN_URL=''
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
