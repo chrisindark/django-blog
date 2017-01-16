@@ -1,0 +1,83 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="well">
+            <h1 class="text-center">Login</h1>
+
+            <form role="form" method="post" action="">
+            {% csrf_token %}
+                <h4 style="color: red; text-align: center;">{{ form.oauth_errors }}</h4>
+
+                <div class="form-group label-floating">
+                    <label for="{{ form.email.id_for_label }}"
+                        class="control-label">Email: ex. john@example.com</label>
+                    <input type="email" class="form-control" name="email"
+                        placeholder="" id="{{ form.email.id_for_label }}"
+                        value="{{ form.email.value | default_if_none:'' }}"
+                        required autofocus>
+                    <p style="color: red;">{{ form.errors.email.as_text }}</p>
+                </div>
+
+                <div class="form-group label-floating">
+                    <label for="{{ form.password.id_for_label }}"
+                        class="control-label">Password: ex. password</label>
+                    <input type="password" class="form-control" name="password"
+                        placeholder="" id="{{ form.password.id_for_label }}"
+                        value="{{ form.password.value | default_if_none:'' }}"
+                        required>
+                    <a class="pull-right" href="{% url 'user_password_reset' %}">Forgot Password?</a>
+                    <p style="color: red;">{{ form.errors.password.as_text }}</p>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-raised btn-primary btn-block">Login</button>
+                    <a href="{% url 'google_login' %}"
+                        class="btn btn-raised btn-google btn-block oauth-btn">Sign in with Google</a>
+                    <!-- <a href="javascript:void(0)"
+                        class="btn btn-raised btn-twitter btn-block oauth-btn">Sign in with Twitter</a> -->
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<style type="text/css">
+    .btn.btn-raised.btn-google {
+        background-color: #dd4b39;
+        border: 1px solid #d54331;
+        color: rgba(255,255,255,.84);
+    }
+
+    .btn.btn-raised.btn-google:hover {
+        background-color: #dd4b39;
+    }
+
+    .btn.btn-raised.btn-google:focus {
+        background-color: #dd4b39;
+    }
+
+    .btn.btn-raised.btn-twitter {
+        background-color: #00aced;
+        border: 1px solid #009fdb;
+        color: rgba(255,255,255,.84);
+    }
+
+    .btn.btn-raised.btn-twitter:hover {
+        background-color: #00aced;
+    }
+
+    .btn.btn-raised.btn-twitter:focus {
+        background-color: #00aced;
+    }
+</style>
+
+<script type="text/javascript">
+    var form = {};
+    form.email = '{{ form.errors.email.as_text }}';
+    form.password = '{{ form.errors.password.as_text }}';
+</script>
+
+{% endblock content %}

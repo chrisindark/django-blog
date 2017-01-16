@@ -1,0 +1,56 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+            <div class="well">
+
+        <h1 class="text-center">Register</h1>
+
+        <form role="form" method="post" action="{% url 'user_register' %}">
+        {% csrf_token %}
+
+                <div class="form-group label-floating">
+                    <label for="{{ form.email.id_for_label }}" class="control-label">Email: ex. john@example.com</label>
+                    <input type="email" class="form-control" name="email"
+                        placeholder="" id="{{ form.email.id_for_label }}"
+                        value="{{ form.email.value | default_if_none:'' }}"
+                        required autofocus>
+                    <p style="color: red;">{{ form.errors.email.as_text }}</p>
+                </div>
+
+                <div class="form-group label-floating">
+                    <label for="{{ form.password1.id_for_label }}" class="control-label">Password: ex. password</label>
+                    <input type="password" class="form-control" name="password1"
+                        placeholder="" id="{{ form.password1.id_for_label }}"
+                        value="{{ form.password1.value | default_if_none:'' }}"
+                        required>
+                    <p style="color: red;">{{ form.errors.password1.as_text }}</p>
+                </div>
+
+                <div class="form-group label-floating">
+                    <label for="{{ form.password2.id_for_label }}" class="control-label">Password confirmation: ex. password</label>
+                    <input type="password" class="form-control" name="password2"
+                        placeholder="" id="{{ form.password2.id_for_label }}"
+                        value="{{ form.password2.value | default_if_none:'' }}"
+                        required>
+                    <p style="color: red;">{{ form.errors.password2.as_text }}</p>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-raised btn-primary btn-block">Register</button>
+                </div>
+        </form>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var form = {};
+    form.email = '{{ form.errors.email.as_text }}';
+    form.password1 = '{{ form.errors.password1.as_text }}';
+    form.password2 = '{{ form.errors.password2.as_text }}';
+</script>
+
+{% endblock content %}

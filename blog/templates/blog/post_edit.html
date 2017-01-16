@@ -1,0 +1,48 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="well">
+
+            {% if form.instance.pk %}
+            <h2 class="title-detail">Edit Post</h2>
+            {% else %}
+            <h2 class="title-detail">New Post</h2>
+            {% endif %}
+
+            <form role="form" method="post" action="">
+            {% csrf_token %}
+                <div class="form-group label-floating">
+                    <label for="{{ form.title.id_for_label }}" class="control-label">Title</label>
+                    <input type="text" class="form-control" name="title"
+                        id="{{ form.title.id_for_label }}"
+                        value="{{ form.title.value | default_if_none:'' }}"
+                        required autofocus>
+                    <p style="color: red;">{{ form.errors.title.as_text }}</p>
+                </div>
+
+                <div class="form-group label-floating">
+                    <label for="{{ form.text.id_for_label }}" class="control-label">Text</label>
+                    <textarea class="form-control" name="text"
+                        id="{{ form.text.id_for_label }}" required>{{ form.text.value | default_if_none:'' }}</textarea>
+                    <p style="color: red;">{{ form.errors.text.as_text }}</p>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" class="btn btn-raised btn-info">Add Photo</button>
+                    <button type="submit" class="btn btn-raised btn-primary btn-block">Save</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var form = {};
+    form.title = '{{ form.errors.title.as_text }}';
+    form.text = '{{ form.errors.text.as_text }}';
+</script>
+
+{% endblock %}

@@ -1,0 +1,121 @@
+html, body {}
+
+body {
+    background-color: #eee;
+}
+
+a, a:hover, a:focus {
+    text-decoration: none;
+}
+
+.my-container {
+    width: 100%;
+}
+
+.my-nav {}
+
+.my-nav-header {
+    /*min-height: 70px;
+    padding-left: 20px;*/
+}
+
+.my-nav .my-nav-brand {
+    color: white;
+    /*min-height: 70px;
+    line-height: 35px;*/
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.my-nav .my-nav-brand > span {
+    padding: 10px;
+    vertical-align: middle;
+    font-size: 0.5em;
+    font-style: italic;
+}
+
+@media screen and (max-width: 480px) {
+    .my-nav .my-nav-brand > span {
+        display: none;
+    }
+}
+
+.my-nav .my-nav-brand:hover {
+    color: white;
+}
+
+.my-navbar-toggle {
+    color: white;
+    padding: 10px;
+    margin: 8px;
+}
+
+.nav-item {
+}
+
+.navbar .navbar-nav > .nav-item > a {
+    color: white;
+    /*line-height: 30px;*/
+    font-size: 1em;
+    font-weight: normal;
+}
+
+.navbar .navbar-nav > .nav-item > a:hover {
+    color: white;
+}
+
+.no-posts {
+    text-align: center;
+}
+
+.post {}
+
+.post .post_user {
+    display: inline-block;
+    font-weight: bold;
+    float: right;
+    padding-bottom: 19px;
+}
+
+@media screen and (max-width: 480px) {
+    .post .post_user {
+        float: none;
+    }
+}
+
+.post .post_user a:hover {
+    text-decoration: none;
+}
+
+.post .post_date {
+    display: inline-block;
+    color: #828282;
+    text-align: left;
+    padding-bottom: 19px;
+}
+
+
+.btn.btn-primary.btn-add-new-post {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: white;
+}
+
+.grid-item {
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 33.33%;
+}
+
+@media screen and (min-width: 481px) and (max-width: 1024px) {
+    .grid-item {
+        width: 50%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .grid-item {
+        width: 100%;
+    }
+}

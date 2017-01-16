@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Django Blog</title>
+
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+    <link rel="stylesheet" href="//fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="/static/bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/bower_components/bootstrap-material-design/dist/css/bootstrap-material-design.css">
+    <link rel="stylesheet" href="/static/bower_components/bootstrap-material-design/dist/css/ripples.css">
+    <link rel="stylesheet" href="/static/bower_components/snackbarjs/dist/snackbar.min.css">
+    <link rel="stylesheet" href="/static/bower_components/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css">
+
+    <link rel="stylesheet" href="/static/stylesheets/blog.css">
+</head>
+
+<body>
+    {% include "blog/navbar.html" %}
+
+    <div class="container my-container">
+        {% block content %}
+        {% endblock content %}
+    </div>
+
+    <script src="/static/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/static/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="/static/bower_components/bootstrap-material-design/dist/js/material.js"></script>
+    <script src="/static/bower_components/bootstrap-material-design/dist/js/ripples.js"></script>
+    <script src="/static/bower_components/snackbarjs/dist/snackbar.min.js"></script>
+    <script src="/static/bower_components/masonry/dist/masonry.pkgd.js"></script>
+    <script src="/static/bower_components/moment/moment.js"></script>
+    <script src="/static/bower_components/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+
+    <script src="/static/javascripts/main.js"></script>
+
+</body>
+
+</html>

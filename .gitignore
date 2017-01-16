@@ -1,0 +1,11 @@
+*.pyc
+.idea
+__pycache__
+media
+local_settings.py
+production_settings.py
+node_modules
+bower_components
+uwsgi.ini
+uwsgi_params
+mysite.sock
