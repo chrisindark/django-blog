@@ -3,10 +3,27 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
 
 # Create your views here.
+
+def post_list(request):
+    # post_list = Post.objects.filter(created_date__isnull=False).order_by('-updated_date')
+    queryset = Post.objects.select_related('author').all()
+    page = request.GET.get('page', 1)
+    paginator = Paginator(queryset, 1)
+    try:
+        posts = paginator.page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    return render(request, 'blog/post_list.html', {'posts': posts})
+
+
 @login_required
 def post_new(request):
     if request.method == "POST":
@@ -43,12 +60,6 @@ def post_edit(request, pk):
         form = PostForm(instance=post)
 
     return render(request, 'blog/post_edit.html', {'form': form})
-
-
-def post_list(request):
-    posts = Post.objects.filter(created_date__isnull=False).order_by('-created_date')
-
-    return render(request, 'blog/post_list.html', {'posts': posts})
 
 
 @login_required
