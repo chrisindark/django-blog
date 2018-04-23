@@ -7,7 +7,9 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField, SetPasswordForm
 from django.contrib.auth import authenticate
 from django.core.validators import RegexValidator
 from django.conf import settings
-from .models import User, UserFile
+from django.utils.crypto import get_random_string
+
+from .models import User, FileUpload
 
 
 MIN_LENGTH = 8
@@ -163,7 +165,7 @@ class UserChangeForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        if len(username) > 0 and len(username) < MIN_LENGTH:
+        if 0 < len(username) < MIN_LENGTH:
             raise forms.ValidationError("The username must be at least %d characters long." % MIN_LENGTH)
         return username
 
@@ -184,18 +186,52 @@ class UserPasswordChangeForm(UserSetPasswordForm):
         return old_password
 
 
+ALLOWED_FILE_TYPES = ('image', 'audio', 'video',)
+ALLOWED_IMAGE_TYPES = ('image/jpeg', 'image/gif', 'image/png',
+    'image/bmp', 'image/webp',)
+ALLOWED_AUDIO_TYPES = ('audio/mpeg', 'audio/mp4', 'audio/wav', 'audio/ogg',)
+ALLOWED_VIDEO_TYPES = ('video/mp4', 'video/webm', 'video/ogg',)
+
+
 class FileForm(forms.ModelForm):
     file = forms.FileField(label='Select a file')
 
     class Meta:
-        model = UserFile
+        model = FileUpload
         fields = ('file',)
 
     def clean_file(self):
         file = self.cleaned_data.get('file')
 
-        #validate content type
-        main, sub = file.content_type.split('/')
-        if not (main == 'image' and sub in ('jpeg', 'pjpeg', 'gif', 'png',)):
-            raise forms.ValidationError("Please use a JPEG, or PNG image.")
+        if len(file.name) > 75:
+            raise forms.ValidationError('File name should be less than or equal to 75 characters.')
+
+        file_type = self.get_filetype(file)
+        if file_type == 'image' and file.content_type not in ALLOWED_IMAGE_TYPES:
+            raise forms.ValidationError('Image format should be of {0}.'.format(', '.join(ALLOWED_IMAGE_TYPES)))
+        elif file_type == 'audio' and file.content_type not in ALLOWED_AUDIO_TYPES:
+            raise forms.ValidationError('Audio format should be of {0}.'.format(', '.join(ALLOWED_AUDIO_TYPES)))
+        elif file_type == 'video' and file.content_type not in ALLOWED_VIDEO_TYPES:
+            raise forms.ValidationError('Video format should be of {0}.'.format(', '.join(ALLOWED_VIDEO_TYPES)))
+
         return file
+
+    @staticmethod
+    def set_filename(file):
+        filename_list = file.name.lower().replace(' ', '_').split('.')
+        ext = filename_list.pop()
+        filename = ''.join(filename_list) + get_random_string(25) + '.' + ext
+        return filename
+
+    @staticmethod
+    def get_filetype(file):
+        if file.content_type.split('/')[0] not in ALLOWED_FILE_TYPES:
+            raise forms.ValidationError({'file': 'File type should be of {0}'.format(', '.join(ALLOWED_FILE_TYPES))})
+        return ALLOWED_FILE_TYPES[ALLOWED_FILE_TYPES.index(file.content_type.split('/')[0])]
+
+    def save(self, commit=True):
+        print(self)
+        file = self.cleaned_data.get('file')
+        self.file['file_content_type'] = file.content_type
+        self.file['size'] = file.size
+        self.file['name'] = self.set_filename(file)

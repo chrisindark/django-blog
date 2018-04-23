@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import Post, Comment
-# Register your models here.
 
+
+# Register your models here.
 class PostAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'text', 'created_date',)
 

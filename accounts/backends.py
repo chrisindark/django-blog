@@ -1,8 +1,10 @@
 from .models import User
 
+
 class OAuthBackend(object):
     """OAuthBackend"""
-    def authenticate(self, email=None):
+    @staticmethod
+    def authenticate(email=None):
         try:
             # Try to find a user matching the username provided
             user = User.objects.get(email=email)
@@ -13,7 +15,8 @@ class OAuthBackend(object):
             return user
 
     # Required for your backend to work properly - unchanged in most scenarios
-    def get_user(self, user_id):
+    @staticmethod
+    def get_user(user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:

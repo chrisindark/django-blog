@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
+import binascii
+import os
 import urllib
 import requests
 import json
@@ -13,7 +15,6 @@ def google_callback(request):
     access_token_url = 'https://accounts.google.com/o/oauth2/token'
     people_api_url = 'https://www.googleapis.com/plus/v1/people/me'
 
-    print('\n\n\n\n')
     print(request.GET)
     req = request.GET
     if 'code' not in req:
@@ -30,13 +31,11 @@ def google_callback(request):
         grant_type='authorization_code'
     )
 
-    print('\n\n\n\n\n\n\n\n\n')
     print(payload)
 
     # Step 1. Exchange authorization code for access token.
     r = requests.post(access_token_url, data=payload)
     res = json.loads(r.text)
-    print('\n\n\n\n\n\n\n\n\n')
     if 'access_token' not in res:
         form = dict(
             oauth_errors=res['error']
@@ -48,11 +47,9 @@ def google_callback(request):
     # Step 2. Retrieve information about the current user.
     r = requests.get(people_api_url, headers=headers)
     res = json.loads(r.text)
-    print('\n\n\n\n\n\n\n\n\n')
     print(res['emails'][0]['value'])
 
     user = authenticate(email=res['emails'][0]['value'])
-    print('\n\n\n\n\n\n\n\n\n')
     print('request: ', request)
     login(request, user)
 
@@ -66,49 +63,58 @@ def google_login(request):
         payload = {
             'redirect_uri': settings.GOOGLE_OAUTH2_CALLBACK_URL,
             'client_id': settings.GOOGLE_OAUTH2_CLIENT_ID,
-            'scope': 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+            'scope': 'https://www.googleapis.com/auth/plus.me https://www.googleapis.com/auth/userinfo.email'
+                     ' https://www.googleapis.com/auth/userinfo.profile',
             'approval_prompt': 'force',
             'access_type': 'offline',
             'response_type': 'code',
         }
 
+        request_token_url = request_token_url + '?' + urllib.parse.urlencode(payload)
+        return redirect(request_token_url)
+
+
+def github_callback(request):
+    request = request.GET
+    if 'code' in request:
+        url = 'https://github.com/login/oauth/access_token'
+        payload = {
+            'client_id': settings.GITHUB_OAUTH2_CLIENT_ID,
+            'client_secret': settings.GITHUB_OAUTH2_CLIENT_SECRET,
+            'code': request.get('code')
+        }
+        headers = {'Accept': 'application/json'}
+        r = requests.post(url, params=payload, headers=headers)
+        response = r.json()
+        # get access_token from response and store in session
+        if 'access_token' in response:
+            print(response['access_token'])
+            # do something with the access token
+        else:
+            form = dict(
+                oauth_errors=response['error']
+            )
+            return render(request, "registration/login.html", {'form': form})
+        # send authenticated user where they're supposed to go
+        return redirect('post_list')
+
+    form = dict(
+        oauth_errors=request['error']
+    )
+    return render(request, "registration/login.html", {'form': form})
+
+
+def github_login(request):
+    request_token_url = 'http://github.com/login/oauth/authorize'
+
+    if request.method == 'GET':
+        payload = {
+            'redirect_uri': settings.GITHUB_OAUTH2_CALLBACK_URL,
+            'client_id': settings.GITHUB_OAUTH2_CLIENT_ID,
+            'scope': 'user public_repo',
+            'state': binascii.hexlify(os.urandom(10)).decode(),
+            'allow_signup': True
+        }
+
         request_token_url_full = request_token_url + '?' + urllib.parse.urlencode(payload)
         return redirect(request_token_url_full)
-
-
-# twitter = OAuth1Service(
-#     name='twitter',
-#     consumer_key='1yCuO4Sfvc3IGEIvE1rPdgfaK',
-#     consumer_secret='RGjHoQB7fLcIVIUikbqMZfHqkFMff4N0wXeAUAHK1zamr2yYK8',
-#     request_token_url='https://api.twitter.com/oauth/request_token',
-#     access_token_url='https://api.twitter.com/oauth/access_token',
-#     authorize_url='https://api.twitter.com/oauth/authorize',
-#     base_url='https://api.twitter.com/1.1/')
-
-# twitter_login = 0
-# request_token = ''
-# request_token_secret = ''
-
-
-# class TwitterOauthView(views.APIView):
-#     def post(self, request):
-#         global login
-#         global request_token, request_token_secret
-#         context = RequestContext(request)
-#         url = request.get_full_path()
-#         # print url
-#         parsed_url = urlparse(url)
-#         # print parsed_url
-
-#         if parsed_url.query == '':
-#             context_dict = {'message': 'Welcome to social login'}
-#             return render_to_response('index.html', context_dict, context)
-#             login = 0
-
-#         elif 'oauth_verifier' in parsed_url.query:
-#             verifier = parse_qs(parsed_url.query)['oauth_verifier'][0]
-#             session = twitter.get_auth_session(request_token,
-#                                                request_token_secret,
-#                                                method='POST',
-#                                                data={'oauth_verifier': verifier})
-

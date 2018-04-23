@@ -1,0 +1,31 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="well">
+            {% if form.instance.pk %}
+            <h2 class="title-detail">Edit Comment</h2>
+            {% else %}
+            <h2 class="title-detail">New Comment</h2>
+            {% endif %}
+
+            <form role="form" method="post" action="">
+            {% csrf_token %}
+                <div class="form-group label-floating">
+                    <label for="{{ form.content.id_for_label }}" class="control-label">Text</label>
+                    <input type="text" class="form-control" name="content"
+                        id="{{ form.content.id_for_label }}"
+                        value="{{ form.content.value | default_if_none:'' }}"
+                        required autofocus>
+                    <p style="color: red;">{{ form.errors.content.as_text }}</p>
+                </div>
+
+                <div class="form-group">
+                    <button type="submit" class="btn btn-raised btn-primary btn-block">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div
+{% endblock %}

@@ -1,12 +1,8 @@
-*.pyc
 .idea
 __pycache__
-media
-local_settings.py
-production_settings.py
+*.pyc
+*.py~
+/media
+/static
 node_modules
-package.json
-bower.json
-uwsgi.ini
-uwsgi_params
-mysite.sock
+bower_components
