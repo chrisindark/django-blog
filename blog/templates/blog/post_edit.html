@@ -23,14 +23,13 @@
                 </div>
 
                 <div class="form-group label-floating">
-                    <label for="{{ form.text.id_for_label }}" class="control-label">Text</label>
-                    <textarea class="form-control" name="text"
-                        id="{{ form.text.id_for_label }}" required>{{ form.text.value | default_if_none:'' }}</textarea>
+                    <label for="{{ form.content.id_for_label }}" class="control-label">Text</label>
+                    <textarea class="form-control" name="content"
+                        id="{{ form.content.id_for_label }}" required>{{ form.content.value | default_if_none:'' }}</textarea>
                     <p style="color: red;">{{ form.errors.text.as_text }}</p>
                 </div>
 
                 <div class="form-group">
-                    <button type="button" class="btn btn-raised btn-info">Add Photo</button>
                     <button type="submit" class="btn btn-raised btn-primary btn-block">Save</button>
                 </div>
             </form>
@@ -38,11 +37,4 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    var form = {};
-    form.title = '{{ form.errors.title.as_text }}';
-    form.text = '{{ form.errors.text.as_text }}';
-</script>
-
 {% endblock %}

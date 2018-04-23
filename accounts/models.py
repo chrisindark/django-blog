@@ -1,8 +1,8 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.auth.models import PermissionsMixin
 
 
 # Create your models here.
@@ -11,35 +11,45 @@ class UserManager(BaseUserManager):
         if not email:
             raise ValueError('Users must have an email address')
         user = self.model(
-            email=self.normalize_email(email)
+            email=self.normalize_email(email), **kwargs
         )
         user.set_password(password)
         user.save()
 
         return user
 
-    def create_superuser(self, email, password):
-        user = self.create_user(
+    def create_superuser(self, email, password, **kwargs):
+        kwargs.setdefault('is_staff', True)
+        kwargs.setdefault('is_admin', True)
+        kwargs.setdefault('is_superuser', True)
+
+        if kwargs.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if kwargs.get('is_admin') is not True:
+            raise ValueError('Superuser must have is_admin=True.')
+        if kwargs.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(
             email=email,
-            password=password
+            password=password,
+            **kwargs
         )
-        user.is_superuser = True
-        user.is_admin = True
-        user.save()
-
-        return user
 
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
-    username = models.CharField(max_length=255, unique=True, null=True, blank=True)
+    username = models.CharField(max_length=20, unique=True, null=True, blank=True)
+
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
-    date_of_birth = models.DateField(null=True, blank=True)
+
     is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
-    created_date = models.DateTimeField(default=timezone.now)
-    # avatar = models.CharField(max_length=255, default='/default/default.png')
+
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
 
@@ -54,21 +64,10 @@ class User(AbstractBaseUser):
         # The user is identified by their email address
         return self.email
 
-    def has_perm(self, perm, obj=None):
-        "Does the user have a specific permission?"
-        # Simplest possible answer: Yes, always
-        return self.is_admin
-
-    def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
-        # Simplest possible answer: Yes, always
-        return self.is_admin
-
-    @property
-    def is_staff(self):
-        "Is the user a member of staff?"
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
+    # def is_staff(self):
+    #     "Is the user a member of staff?"
+    #     # Simplest possible answer: All admins are staff
+    #     return self.is_admin
 
     def __str__(self):
         return self.email
@@ -77,22 +76,25 @@ class User(AbstractBaseUser):
         return '<User: {email}>'.format(email=self.email)
 
 
-class File(models.Model):
-    file = models.FileField(null=True, blank=True, upload_to='./images')
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+def file_directory_path(instance, filename):
+    return settings.FILE_UPLOAD_PATH + '{0}/{1}'.format(instance.user_id, instance.name)
+
+
+class FileUpload(models.Model):
+    user = models.ForeignKey('User')
+    name = models.CharField(max_length=100)
+    file = models.FileField(upload_to=file_directory_path, max_length=255)
+    file_type = models.CharField(max_length=5)
+    file_content_type = models.CharField(max_length=20)
+    size = models.BigIntegerField(default=0)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.file
+        return self.name
 
     def __repr__(self):
-        return '<File: {file}>'.format(file=self.file)
-
-
-class UserFile(models.Model):
-    user = models.ForeignKey('User')
-    files = GenericRelation(File)
+        return '<File: {name}>'.format(name=self.name)
 
 
 GENDER_CHOICES = (
@@ -105,13 +107,19 @@ GENDER_CHOICES = (
 class UserProfile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     nickname = models.TextField(max_length=64, null=True, blank=True)
-#    dob = models.DateField(null=True, blank=True)
+    dob = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, default='M')
     bio = models.TextField(max_length=1024, null=True, blank=True)
+    # avatar = models.CharField(max_length=255, default='/default/default.png')
+    created_date = models.DateTimeField(default=timezone.now)
+    updated_date = models.DateTimeField(default=timezone.now)
+
+    def update(self):
+        self.updated_date = timezone.now()
+        self.save()
 
     def __str__(self):
         return self.nickname
 
     def __repr__(self):
         return '<UserProfile: {nickname}>'.format(nickname=self.nickname)
-        return self.nickname

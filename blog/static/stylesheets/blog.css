@@ -108,9 +108,15 @@ a, a:hover, a:focus {
     width: 33.33%;
 }
 
-@media screen and (min-width: 481px) and (max-width: 1024px) {
+@media screen and (min-width: 769px) and (max-width: 1024px) {
     .grid-item {
         width: 50%;
+    }
+}
+
+@media screen and (min-width: 489px) and (max-width: 768px) {
+    .grid-item {
+        width: 100%;
     }
 }
 
@@ -118,4 +124,19 @@ a, a:hover, a:focus {
     .grid-item {
         width: 100%;
     }
+}
+
+.my-inline-block {
+    display: inline-block;
+}
+
+.my-block {
+    display: block;
+}
+
+.btn.btn-primary.btn-post-draft {
+    position: fixed;
+    bottom: 20px;
+    right: 90px;
+    color: white;
 }
