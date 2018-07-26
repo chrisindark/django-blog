@@ -1,9 +1,6 @@
 from mysite.settings.common import *
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_env_var('SECRET_KEY', default='secret-key')
 
@@ -62,18 +59,21 @@ if os.environ.get('DJB_HEROKU_ENV'):
     DATABASES['default'] = dj_database_url.config()
 else:
     DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': get_env_var('DB_NAME'),
-        'USER': get_env_var('DB_USERNAME'),
-        'PASSWORD': get_env_var('DB_PASSWORD'),
-        'HOST': get_env_var('DB_HOST'),
-        'PORT': get_env_var('DB_PORT'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'djangoblog',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': get_env_var('DB_NAME'),
+        # 'USER': get_env_var('DB_USERNAME'),
+        # 'PASSWORD': get_env_var('DB_PASSWORD'),
+        # 'HOST': get_env_var('DB_HOST'),
+        # 'PORT': get_env_var('DB_PORT'),
     }
 
 SITE_NAME = 'DjangoBlog'
 APP_NAME = 'DjangoBlog'
 STATIC_APP_URL = get_env_var('STATIC_APP_URL', default='http://localhost:8000/')
 DOMAIN_URL = STATIC_APP_URL.split('://')[1]
+
 LOGIN_URL='/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_URL = '/accounts/logout/'
@@ -84,10 +84,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'http')
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
