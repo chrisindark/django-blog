@@ -24,5 +24,9 @@
     "moment": "~2.10.6",
     "bootstrap-material-datetimepicker": "~2.7.1",
     "snackbarjs": "^1.1.0"
+  },
+  "resolutions": {
+    "jquery": "~2.2.4",
+    "bootstrap-material-design": "~0.5.10"
   }
 }

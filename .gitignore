@@ -6,3 +6,4 @@ __pycache__
 /static
 node_modules
 bower_components
+.env
