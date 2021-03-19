@@ -23,7 +23,7 @@ django-cors-headers==2.1.0
 django-extensions==1.7.9
 django-filter==1.0.4
 django-toolbelt==0.0.1
-djangorestframework==3.6.3
+djangorestframework==3.11.2
 ecdsa==0.13
 enum34==1.1.6
 gunicorn==19.7.1
