@@ -68,7 +68,7 @@ social-auth-core==1.4.0
 SQLAlchemy==1.1.10
 static3==0.7.0
 traitlets==4.3.2
-Twisted==17.5.0
+Twisted==22.10.0
 txaio==2.8.0
 urllib3==1.21.1
 uWSGI==2.0.15
